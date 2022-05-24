@@ -1,6 +1,5 @@
 const helpers = require("./helpers");
 const _data = require('./data');
-const { read } = require("./data");
 
 // Create the container
 let handlers = {};
@@ -187,9 +186,9 @@ handlers.blogPost = async function(data){
         let postId = helpers.createRandomString(20);
         if(fileName){
             let imageFileName = helpers.createRandomString(10);
-            let allPostImagesName = [];
+            let allPostImages = [];
             let allPostImagesExtensions = [];
-            allPostImagesName.push(imageFileName);
+            allPostImages.push(imageFileName);
             allPostImagesExtensions.push(fileExtension);
             let imageData = await _data.createImage('upload',imageFileName+'.'+fileExtension,fileContent ,{encoding:'base64'});
             if(imageData){
@@ -201,8 +200,8 @@ handlers.blogPost = async function(data){
                     "fileName" : imageFileName,
                     "fileExtension" : fileExtension ,
                     "mainContent" : mainContent,
-                    "allPostImagesName" : allPostImagesName,
-                    "allPostImagesExtension" : allPostImagesExtensions,
+                    "allPostImages" : allPostImages,
+                    "allPostImagesExtensions" : allPostImagesExtensions,
 
                 }
 
@@ -402,7 +401,45 @@ handlers.blogPost = async function(data){
       }
   }
 
-  
+
+
+  handlers._blogPost.delete = async function(data){
+      try{
+        let id = typeof(data.queryStringObject.id) == 'string' && data.queryStringObject.id.trim().length == 20 ? data.queryStringObject.id.trim() : false;
+        if(!id){
+            return{
+                'statusCode' : 400,
+                'payload' : {'Error' : 'No ID inside the query'}
+            }
+        }
+        let postData = await _data.read('posts',id);
+        if(!postData){
+            return{
+                'statusCode' : 400,
+                'payload' : {'Error' : 'Error reading the post data'}
+            }
+        }
+        for(let i=0;i<postData.allPostImages.length;i++){
+            await _data.deleteImage('upload',postData.allPostImages[i],postData.allPostImagesExtensions[i]);
+        }
+        let deletePost = await _data.delete('posts',id);
+        if(!deletePost){
+            return{
+                'statusCode' : 400,
+                'payload' : {'Error' : 'Error deleting the post'}
+            }
+        }
+        return{
+            'statusCode' : 200,
+            'payload' : {'Success' : 'Your post has been deleted!'}
+        }
+      } catch(e){
+          console.error(e);
+      }
+
+
+  }
+
   handlers.read = async function(data){
       try{
         if(data.method == 'get'){

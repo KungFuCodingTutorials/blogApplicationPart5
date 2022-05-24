@@ -85,4 +85,32 @@ lib.update = async function(dir,file,data){
     }
 }
 
+lib.deleteImage = async function(dir,fileName,fileExtension){
+    try{
+        let fileHandle = await fsPromises.unlink(lib.baseDirImage+dir+'/'+fileName+'.'+fileExtension);
+        console.log(fileHandle)
+        if(fileHandle){
+            return true;
+        } else {
+            return false;
+        }
+    } catch(e){
+        console.error(e);
+    }
+}
+
+lib.delete = async function(dir,fileName){
+    try{
+        let fileHandle = await fsPromises.unlink(lib.baseDir+dir+'/'+fileName+'.json');
+        if(fileHandle == undefined){
+            return true;
+        } else {
+            return false;
+        }
+    } catch(e){
+        console.error(e);
+    }
+}
+
+
 module.exports = lib;
