@@ -1,6 +1,6 @@
-# blogApplicationPart4
+# blogApplicationPart5
 
-In this video, i show how you can build the logic for the update operation (PUT) with Vanilla Node JS.
-I also show how you can make the user able to update a blog post and how can update images😊🙌
+In this video, i show how you can build the logic for the delete operation (DELETE) with Vanilla Node JS😊🙌
+I also show how you can build a server side logic to delete all the post related images together with the post object👌
 
-Part 5 will be ready soon!🔥
+Part 6 will be ready soon!🔥🤞
