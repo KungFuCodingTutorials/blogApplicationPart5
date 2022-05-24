@@ -218,7 +218,7 @@ app.editPost = async function(){
         imagePreview.src = '/public/images/upload/'+postData.fileName+'.'+postData.fileExtension;
 
 
-        // Build the post update object
+        // Build the post upadte object
         let postCreateForm = document.querySelector('#postEditForm');
         postCreateForm.addEventListener('submit',async function(e){
             e.preventDefault();
@@ -247,6 +247,7 @@ app.editPost = async function(){
                 }
                 let serverResponse = await app.client.request(undefined,'posts','PUT',undefined,postEditObject);
                 console.log(serverResponse);
+                window.location = '/';
             }
             console.log(fileExtension)
             if(acceptableExtensions.indexOf(fileExtension) > - 1){
@@ -299,7 +300,6 @@ app.editPost = async function(){
     }
 }
 
-
 app.showPreview = function(){
     let postImage = document.querySelector('#postImage');
     postImage.addEventListener('change',function(event){
@@ -307,10 +307,32 @@ app.showPreview = function(){
             let src = URL.createObjectURL(event.target.files[0]);
             let preview = document.getElementById('imagePreview');
             preview.src = src;
-            
-           
         }
     })
+}
+
+
+app.deletePost = async function(){
+    try{
+        let postId = window.location.href.split('=')[1];
+        postId = typeof(postId) == 'string' && postId.trim().length == 20 ? postId.trim() : false;
+        let queryStringObject = {
+            'id' : postId
+        }
+        let form = document.querySelector('#postDeleteForm');
+        form.addEventListener('submit',async function(e){
+            e.preventDefault();
+            let serverResponse = await app.client.request(undefined,'posts','DELETE',queryStringObject,undefined);
+            if(serverResponse.Error){
+                console.log(serverResponse.Error);
+                return
+            }
+            window.location.href = '/';
+        })
+        
+    } catch(e){
+        console.error(e);
+    }
 }
 
 
@@ -329,6 +351,7 @@ app.init = function(){
     if(window.location.pathname === '/edit'){
         app.editPost();
         app.showPreview();
+        app.deletePost();
     }
 }
 
